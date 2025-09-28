@@ -240,7 +240,7 @@ public class InvestmentTrackerFrame extends JFrame {
         }
 
         @Override
-        public String valueToString(Object value) throws ParseException {
+        public String valueToString(Object value) {
             if (value == null) return "";
             if (value instanceof java.util.Date) {
                 return dateFormatter.format((java.util.Date) value);
