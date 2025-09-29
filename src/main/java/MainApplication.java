@@ -1,4 +1,4 @@
-import me.m41k0n.investment.InvestmentTrackerFrame;
+import me.m41k0n.investment.gui.InvestmentTrackerFrame;
 import me.m41k0n.investment.service.InvestmentService;
 
 import javax.swing.*;

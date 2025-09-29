@@ -9,6 +9,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class InvestmentService {
@@ -41,6 +44,41 @@ public class InvestmentService {
                     .thenApply(response -> response.statusCode() == 201
                             ? "success"
                             : "Error saving: " + response.body())
+                    .exceptionally(ex -> "Communication error: " + ex.getMessage());
+        } catch (IOException ex) {
+            CompletableFuture.completedFuture("Serialization error: " + ex.getMessage());
+        }
+    }
+
+    public List<InvestmentDTO> findAll() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:8080/api/investments"))
+                    .GET()
+                    .header("Accept", "application/json")
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return Arrays.asList(objectMapper.readValue(response.body(), InvestmentDTO[].class));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
+
+    public void update(InvestmentDTO dto) {
+        try {
+            String body = objectMapper.writeValueAsString(dto);
+            HttpRequest request = buildRequest()
+                    .PUT(HttpRequest.BodyPublishers.ofString(body))
+                    .uri(URI.create(API_URL + "/" + dto.id()))
+                    .build();
+            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenApply(response -> response.statusCode() == 200
+                            ? "success"
+                            : "Error updating: " + response.body())
                     .exceptionally(ex -> "Communication error: " + ex.getMessage());
         } catch (IOException ex) {
             CompletableFuture.completedFuture("Serialization error: " + ex.getMessage());
