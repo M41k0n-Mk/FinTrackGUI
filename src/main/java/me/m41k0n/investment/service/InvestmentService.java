@@ -65,7 +65,7 @@ public class InvestmentService {
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
-                return Arrays.asList(objectMapper.readValue(response.body(), InvestmentDTO[].class));
+                return List.of(objectMapper.readValue(response.body(), InvestmentDTO[].class));
             }
         } catch (Exception e) {
             logger.error("Failed to fetch investments from API", e);
