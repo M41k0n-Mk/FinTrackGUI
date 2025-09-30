@@ -61,6 +61,13 @@ public class InvestmentEditPanel extends JPanel {
         List<InvestmentDTO> investments = investmentService.findAll();
         tableModel.setRowCount(0);
 
+        if (investments.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Failed to load investments or no investments found.",
+                    "Loading Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
         for (InvestmentDTO dto : investments) {
             tableModel.addRow(new Object[]{
                     dto.id(),

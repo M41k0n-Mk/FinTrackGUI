@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 public class InvestmentEditDialog extends JDialog {
@@ -94,7 +95,14 @@ public class InvestmentEditDialog extends JDialog {
         String name = nameField.getText().trim();
         String type = typeField.getText().trim();
         String broker = brokerField.getText().trim();
-        LocalDate date = LocalDate.parse(dateField.getText().trim());
+        String dateText = dateField.getText().trim();
+        LocalDate date;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            date = LocalDate.parse(dateText, formatter);
+        } catch (java.time.format.DateTimeParseException ex) {
+            throw new IllegalArgumentException("Invalid date format. Please use yyyy-MM-dd.");
+        }
 
         String valueText = valueField.getText().trim().replace(",", ".");
         String rateText = rateField.getText().trim().replace(",", ".");

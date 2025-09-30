@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import me.m41k0n.investment.dto.InvestmentDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,11 +17,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+
 public class InvestmentService {
 
     private static final String API_URL = "http://localhost:8080/api/investments";
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(InvestmentService.class);
 
     public InvestmentService() {
         this.httpClient = HttpClient.newHttpClient();
@@ -63,7 +68,7 @@ public class InvestmentService {
                 return Arrays.asList(objectMapper.readValue(response.body(), InvestmentDTO[].class));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to fetch investments from API", e);
         }
         return Collections.emptyList();
     }
