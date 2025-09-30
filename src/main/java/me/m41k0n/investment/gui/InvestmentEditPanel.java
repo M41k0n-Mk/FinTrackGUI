@@ -86,7 +86,15 @@ public class InvestmentEditPanel extends JPanel {
         String broker = (String) tableModel.getValueAt(selectedRow, 3);
         BigDecimal value = (BigDecimal) tableModel.getValueAt(selectedRow, 4);
         BigDecimal rate = (BigDecimal) tableModel.getValueAt(selectedRow, 5);
-        LocalDate date = (LocalDate) tableModel.getValueAt(selectedRow, 6);
+        Object dateObj = tableModel.getValueAt(selectedRow, 6);
+
+        LocalDate date;
+        if (dateObj instanceof LocalDate) {
+            date = (LocalDate) dateObj;
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid date type in table. Cannot edit.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         InvestmentDTO dto = new InvestmentDTO(id, name, type, broker, value, rate, date);
 

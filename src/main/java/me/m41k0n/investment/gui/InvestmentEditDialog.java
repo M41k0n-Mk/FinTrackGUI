@@ -75,11 +75,15 @@ public class InvestmentEditDialog extends JDialog {
     private void handleSave() {
         try {
             InvestmentDTO updated = getInvestmentDTO();
-            investmentService.update(updated);
+            String result = investmentService.update(updated);
 
-            JOptionPane.showMessageDialog(this, "Investment updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
-            refreshCallback.accept(null);
+            if ("success".equals(result)) {
+                JOptionPane.showMessageDialog(this, "Investment updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+                refreshCallback.accept(null);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error: " + result, "Update Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Update Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -90,9 +94,21 @@ public class InvestmentEditDialog extends JDialog {
         String name = nameField.getText().trim();
         String type = typeField.getText().trim();
         String broker = brokerField.getText().trim();
-        BigDecimal value = new BigDecimal(valueField.getText().trim().replace(",", "."));
-        BigDecimal rate = new BigDecimal(rateField.getText().trim().replace(",", "."));
         LocalDate date = LocalDate.parse(dateField.getText().trim());
+
+        String valueText = valueField.getText().trim().replace(",", ".");
+        String rateText = rateField.getText().trim().replace(",", ".");
+        BigDecimal value, rate;
+        try {
+            value = new BigDecimal(valueText);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("Invalid value: '" + valueText + "'. Please enter a valid decimal number.");
+        }
+        try {
+            rate = new BigDecimal(rateText);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("Invalid rate: '" + rateText + "'. Please enter a valid decimal number.");
+        }
 
         return new InvestmentDTO(id, name, type, broker, value, rate, date);
     }

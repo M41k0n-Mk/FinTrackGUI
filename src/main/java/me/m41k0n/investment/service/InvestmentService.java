@@ -68,20 +68,21 @@ public class InvestmentService {
         return Collections.emptyList();
     }
 
-    public void update(InvestmentDTO dto) {
+    public String update(InvestmentDTO dto) {
         try {
             String body = objectMapper.writeValueAsString(dto);
             HttpRequest request = buildRequest()
                     .PUT(HttpRequest.BodyPublishers.ofString(body))
                     .uri(URI.create(API_URL + "/" + dto.id()))
                     .build();
-            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(response -> response.statusCode() == 200
-                            ? "success"
-                            : "Error updating: " + response.body())
-                    .exceptionally(ex -> "Communication error: " + ex.getMessage());
-        } catch (IOException ex) {
-            CompletableFuture.completedFuture("Serialization error: " + ex.getMessage());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return "success";
+            } else {
+                return "Error updating: " + response.body();
+            }
+        } catch (IOException | InterruptedException ex) {
+            return "Serialization/communication error: " + ex.getMessage();
         }
     }
 }
