@@ -1,4 +1,4 @@
-package me.m41k0n.investment;
+package me.m41k0n.investment.gui;
 
 import me.m41k0n.investment.dto.InvestmentDTO;
 import me.m41k0n.investment.service.InvestmentService;
@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-public class InvestmentTrackerFrame extends JFrame {
+public class InvestmentRegisterPanel extends JPanel {
 
     private final InvestmentService investmentService;
     private JComboBox<String> typeComboBox;
@@ -56,28 +56,14 @@ public class InvestmentTrackerFrame extends JFrame {
         });
     }
 
-    public InvestmentTrackerFrame(InvestmentService service) {
+    public InvestmentRegisterPanel(InvestmentService service) {
         this.investmentService = service;
-        setTitle("FinTrack - Gerenciador de Investimentos");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 500);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        setupMainUI();
-        setVisible(true);
+        setBorder(new EmptyBorder(30, 50, 30, 50));
+        add(createFormPanel(), BorderLayout.CENTER);
     }
 
-    private void setupMainUI() {
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.setFont(new Font("Arial", Font.BOLD, 16));
-        tabbedPane.addTab("Cadastrar Investimento", createRegisterPanel());
-        add(tabbedPane, BorderLayout.CENTER);
-    }
-
-    private JPanel createRegisterPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new EmptyBorder(30, 50, 30, 50));
-
+    private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         Font labelFont = new Font("Arial", Font.BOLD, 15);
@@ -139,7 +125,7 @@ public class InvestmentTrackerFrame extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
         JButton saveButton = new JButton("Salvar");
         saveButton.setFont(new Font("Arial", Font.BOLD, 15));
-        saveButton.addActionListener(e -> handleSaveOrUpdate());
+        saveButton.addActionListener(e -> handleSave());
         JButton clearButton = new JButton("Limpar");
         clearButton.setFont(new Font("Arial", Font.BOLD, 15));
         clearButton.addActionListener(e -> clearFields());
@@ -147,8 +133,7 @@ public class InvestmentTrackerFrame extends JFrame {
         buttonPanel.add(clearButton);
 
         formPanel.add(buttonPanel, gbc);
-        panel.add(formPanel, BorderLayout.CENTER);
-        return panel;
+        return formPanel;
     }
 
     private JLabel createLabel(String text, Font font) {
@@ -181,7 +166,7 @@ public class InvestmentTrackerFrame extends JFrame {
         return c;
     }
 
-    private void handleSaveOrUpdate() {
+    private void handleSave() {
         String type = (String) typeComboBox.getSelectedItem();
         String name = (String) nameComboBox.getSelectedItem();
         String broker = brokerField.getText().trim();
@@ -240,7 +225,7 @@ public class InvestmentTrackerFrame extends JFrame {
         }
 
         @Override
-        public String valueToString(Object value) throws ParseException {
+        public String valueToString(Object value) {
             if (value == null) return "";
             if (value instanceof java.util.Date) {
                 return dateFormatter.format((java.util.Date) value);
