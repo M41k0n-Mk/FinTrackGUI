@@ -58,14 +58,16 @@ public class InvestmentEditPanel extends JPanel {
     }
 
     public void loadInvestments() {
-        List<InvestmentDTO> investments = investmentService.findAll();
+        List<InvestmentDTO> investments;
         tableModel.setRowCount(0);
-
-        if (investments.isEmpty()) {
+        try {
+            investments = investmentService.findAll();
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
-                    "Failed to load investments or no investments found.",
+                    "Failed to load investments: " + ex.getMessage(),
                     "Loading Error",
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         for (InvestmentDTO dto : investments) {

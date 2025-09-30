@@ -58,7 +58,7 @@ public class InvestmentService {
     public List<InvestmentDTO> findAll() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8080/api/investments"))
+                    .uri(URI.create(API_URL))
                     .GET()
                     .header("Accept", "application/json")
                     .build();
