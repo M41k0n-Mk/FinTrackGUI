@@ -27,6 +27,7 @@ public class InvestmentRegisterPanel extends JPanel {
     private JTextField brokerField;
     private JFormattedTextField valueField, purchaseRateField;
     private JDatePickerImpl datePicker;
+    private JComboBox<String> operationTypeComboBox;
 
     private static final Map<String, String[]> TYPE_TO_NAMES = new LinkedHashMap<>();
     static {
@@ -104,6 +105,11 @@ public class InvestmentRegisterPanel extends JPanel {
         purchaseRateField.setValue(0.00);
         formPanel.add(purchaseRateField, gbc(1, y++, GridBagConstraints.LINE_START));
 
+        formPanel.add(createLabel("Tipo de Operação:", labelFont), gbc(0, y, GridBagConstraints.LINE_END));
+        operationTypeComboBox = new JComboBox<>(new String[]{"COMPRA", "VENDA"});
+        operationTypeComboBox.setFont(fieldFont);
+        formPanel.add(operationTypeComboBox, gbc(1, y++, GridBagConstraints.LINE_START));
+
         formPanel.add(createLabel("Data de Compra:", labelFont), gbc(0, y, GridBagConstraints.LINE_END));
         UtilDateModel model = new UtilDateModel();
         model.setValue(new java.util.Date());
@@ -172,9 +178,10 @@ public class InvestmentRegisterPanel extends JPanel {
         String broker = brokerField.getText().trim();
         String valueStr = valueField.getText().trim().replace(",", ".");
         String rateStr = purchaseRateField.getText().trim().replace(",", ".");
+        String operationType = (String) operationTypeComboBox.getSelectedItem();
         java.util.Date purchaseUtilDate = (java.util.Date) datePicker.getModel().getValue();
 
-        if (name == null || type == null || broker.isEmpty() || valueStr.isEmpty() || rateStr.isEmpty() || purchaseUtilDate == null) {
+        if (name == null || type == null || broker.isEmpty() || valueStr.isEmpty() || rateStr.isEmpty() || purchaseUtilDate == null || operationType == null) {
             JOptionPane.showMessageDialog(this, "Preencha todos os campos obrigatórios.", "Validação", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -183,7 +190,7 @@ public class InvestmentRegisterPanel extends JPanel {
             BigDecimal value = new BigDecimal(valueStr);
             BigDecimal purchaseRate = new BigDecimal(rateStr);
             LocalDate purchaseDate = purchaseUtilDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
-            InvestmentDTO request = new InvestmentDTO(name, type, broker, value, purchaseRate, purchaseDate);
+            InvestmentDTO request = new InvestmentDTO(name, type, broker, value, purchaseRate, purchaseDate, operationType);
             investmentService.save(request);
             JOptionPane.showMessageDialog(this, "Investimento salvo com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             clearFields();
@@ -200,6 +207,7 @@ public class InvestmentRegisterPanel extends JPanel {
         brokerField.setText("");
         valueField.setValue(0.00);
         purchaseRateField.setValue(0.00);
+        operationTypeComboBox.setSelectedIndex(0);
         UtilDateModel model = (UtilDateModel) datePicker.getModel();
         java.util.Date newDate = new java.util.Date();
         model.setValue(newDate);

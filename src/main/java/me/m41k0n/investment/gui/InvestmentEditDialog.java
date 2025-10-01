@@ -18,6 +18,7 @@ public class InvestmentEditDialog extends JDialog {
     private JTextField nameField, typeField, brokerField;
     private JFormattedTextField valueField, rateField;
     private JTextField dateField;
+    private JComboBox<String> operationTypeComboBox;
 
     public InvestmentEditDialog(InvestmentDTO dto, InvestmentService service, Consumer<Void> refreshCallback) {
         this.original = dto;
@@ -25,14 +26,14 @@ public class InvestmentEditDialog extends JDialog {
         this.refreshCallback = refreshCallback;
         setTitle("Edit Investment");
         setModal(true);
-        setSize(420, 360);
+        setSize(420, 400);
         setLocationRelativeTo(null);
         setupUI();
         fillFields(dto);
     }
 
     private void setupUI() {
-        JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(8, 2, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         panel.add(new JLabel("Name:"));
@@ -49,6 +50,10 @@ public class InvestmentEditDialog extends JDialog {
 
         panel.add(new JLabel("Rate:"));
         rateField = new JFormattedTextField(); panel.add(rateField);
+
+        panel.add(new JLabel("Operation Type:"));
+        operationTypeComboBox = new JComboBox<>(new String[]{"COMPRA", "VENDA"});
+        panel.add(operationTypeComboBox);
 
         panel.add(new JLabel("Purchase Date (yyyy-MM-dd):"));
         dateField = new JTextField(20); panel.add(dateField);
@@ -70,6 +75,7 @@ public class InvestmentEditDialog extends JDialog {
         brokerField.setText(dto.broker());
         valueField.setValue(dto.investmentValue());
         rateField.setValue(dto.purchaseRate());
+        operationTypeComboBox.setSelectedItem(dto.operationType());
         dateField.setText(dto.purchaseDate().toString());
     }
 
@@ -95,6 +101,7 @@ public class InvestmentEditDialog extends JDialog {
         String name = nameField.getText().trim();
         String type = typeField.getText().trim();
         String broker = brokerField.getText().trim();
+        String operationType = (String) operationTypeComboBox.getSelectedItem();
         String dateText = dateField.getText().trim();
         LocalDate date;
         try {
@@ -118,6 +125,6 @@ public class InvestmentEditDialog extends JDialog {
             throw new IllegalArgumentException("Invalid rate: '" + rateText + "'. Please enter a valid decimal number.");
         }
 
-        return new InvestmentDTO(id, name, type, broker, value, rate, date);
+        return new InvestmentDTO(id, name, type, broker, value, rate, date, operationType);
     }
 }
