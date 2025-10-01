@@ -48,11 +48,17 @@ public class InvestmentEditPanel extends JPanel {
         editButton.setFont(new Font("Arial", Font.BOLD, 15));
         editButton.addActionListener(e -> handleEdit());
 
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.setFont(new Font("Arial", Font.BOLD, 15));
+        deleteButton.setForeground(Color.RED);
+        deleteButton.addActionListener(e -> handleDelete());
+
         JButton refreshButton = new JButton("Refresh");
         refreshButton.setFont(new Font("Arial", Font.BOLD, 15));
         refreshButton.addActionListener(e -> loadInvestments());
 
         buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
         buttonPanel.add(refreshButton);
         return buttonPanel;
     }
@@ -109,5 +115,29 @@ public class InvestmentEditPanel extends JPanel {
 
         InvestmentEditDialog dialog = new InvestmentEditDialog(dto, investmentService, v -> loadInvestments());
         dialog.setVisible(true);
+    }
+
+    private void handleDelete() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Select an investment to delete.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String id = (String) tableModel.getValueAt(selectedRow, 0);
+        String name = (String) tableModel.getValueAt(selectedRow, 1);
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to delete the investment \"" + name + "\"?",
+                "Confirm Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            String result = investmentService.delete(id);
+            if ("success".equals(result)) {
+                JOptionPane.showMessageDialog(this, "Investment deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                loadInvestments();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error deleting: " + result, "Delete Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 }
