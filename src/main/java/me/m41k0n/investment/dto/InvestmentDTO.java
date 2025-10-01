@@ -10,9 +10,10 @@ public record InvestmentDTO(
         String broker,
         BigDecimal investmentValue,
         BigDecimal purchaseRate,
-        LocalDate purchaseDate
+        LocalDate purchaseDate,
+        String operationType
 ) {
-    public InvestmentDTO(String name, String type, String broker, BigDecimal investmentValue, BigDecimal purchaseRate, LocalDate purchaseDate) {
-        this(null, name, type, broker, investmentValue, purchaseRate, purchaseDate);
+    public InvestmentDTO(String name, String type, String broker, BigDecimal investmentValue, BigDecimal purchaseRate, LocalDate purchaseDate, String operationType) {
+        this(null, name, type, broker, investmentValue, purchaseRate, purchaseDate, operationType);
     }
 }
