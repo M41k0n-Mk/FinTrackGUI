@@ -26,7 +26,7 @@ public class InvestmentEditPanel extends JPanel {
 
     private void setupUI() {
         tableModel = new DefaultTableModel(new Object[]{
-                "ID", "Name", "Type", "Broker", "Value", "Rate", "Purchase Date"
+                "ID", "Name", "Type", "Broker", "Value", "Rate", "Purchase Date", "Operation Type"
         }, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -84,7 +84,8 @@ public class InvestmentEditPanel extends JPanel {
                     dto.broker(),
                     dto.investmentValue(),
                     dto.purchaseRate(),
-                    dto.purchaseDate()
+                    dto.purchaseDate(),
+                    dto.operationType()
             });
         }
     }
@@ -102,6 +103,7 @@ public class InvestmentEditPanel extends JPanel {
         BigDecimal value = (BigDecimal) tableModel.getValueAt(selectedRow, 4);
         BigDecimal rate = (BigDecimal) tableModel.getValueAt(selectedRow, 5);
         Object dateObj = tableModel.getValueAt(selectedRow, 6);
+        String operationType = (String) tableModel.getValueAt(selectedRow, 7);
 
         LocalDate date;
         if (dateObj instanceof LocalDate) {
@@ -111,7 +113,7 @@ public class InvestmentEditPanel extends JPanel {
             return;
         }
 
-        InvestmentDTO dto = new InvestmentDTO(id, name, type, broker, value, rate, date);
+        InvestmentDTO dto = new InvestmentDTO(id, name, type, broker, value, rate, date, operationType);
 
         InvestmentEditDialog dialog = new InvestmentEditDialog(dto, investmentService, v -> loadInvestments());
         dialog.setVisible(true);
